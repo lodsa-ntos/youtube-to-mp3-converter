@@ -1,0 +1,22 @@
+{
+  "name": "youtube-to-mp3-converter-backend",
+  "version": "1.0.0",
+  "description": "Backend for YouTube to MP3 Converter",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "Lodney Santos",
+  "license": "ISC",
+  "dependencies": {
+    "backend": "file:",
+    "express": "^4.21.2",
+    "youtube-to-mp3-converter-backend": "file:",
+    "ytdl-core": "^4.11.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
