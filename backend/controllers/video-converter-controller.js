@@ -9,6 +9,7 @@ const path = require('path');
 // Importar o módulo 'fs' para leitura e escrita nos ficheiros
 // Import the 'fs' module for file reading and writing
 const fs = require('fs');
+const { url } = require('inspector');
 
 let downloadStatus = {
     inProgress: false,
@@ -26,6 +27,12 @@ async function convertVideo(req, res) {
     // Checks if the video link was provided; if not, returns an HTTP 400 response with an error message
     if (!videoUrl) {
         return res.status(400).json({ message: 'Video URL is required'});
+    }
+
+    const isValidUrl = (url) => /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/.test(url);
+
+    if (!isValidUrl(videoUrl)) {
+        return res.status(400).json({ message: 'Invalid Youtube URL'});
     }
 
     downloadStatus.inProgress = true;
@@ -78,7 +85,7 @@ async function convertVideo(req, res) {
         // Retorna o status atual da conversão, seja ele em andamento ou finalizado.
         // Returns the current status of the conversion, either in progress or finalised.
         app.get('/status', (res) => { 
-            res.status(200).json(downloadStatus);
+            res.status(200).json(downloadStatus.message);
         })
 
         res.status(200).join({ message: 'Conversion started', downloadUrl: `/public/downloads/${fileName}` });
@@ -86,9 +93,5 @@ async function convertVideo(req, res) {
         res.status(500).json({ message: 'Error during conversion', error});
     }
 }
-
-
-
-
 
 module.exports = { convertVideo };
