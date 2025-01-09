@@ -16,6 +16,13 @@ const fs = require('fs');
 const { error } = require('console');
 
 //
+// Importar o logger
+// Import the logger
+//
+const logger = require('../utils/record-logs');
+
+
+//
 // Middleware global para capturar erros que possam escapam do fluxo esperado.
 // Global middleware to capture errors that may escape the expected flow.
 //
@@ -46,18 +53,23 @@ async function convertVideo(req, res) {
     
     const { videoUrl } = req.body;
 
+    logger.info(`Request received to convert video: ${videoUrl}`);
+
     //
     // Validar o URL e a disponibilidade do vídeo.
     // Validate the URL and the availability of the video.
     //
     if (!videoUrl || !validateUrl(videoUrl)) {
+        logger.warn(`Invalid or missing video URL: ${videoUrl}`);
         return res.status(400).json({ message: 'Invalid or missing video URL'});
     }
 
-    downloadStatus.inProgress = true;
-    downloadStatus.message = 'Conversion in progress...';
-
     try {
+
+        downloadStatus.inProgress = true;
+        downloadStatus.message = 'Conversion in progress...';
+        logger.info('Video conversion started.');
+
         const videoInfo = await ytdl.getInfo(videoUrl);
         const fileName = `${videoInfo.videoDetails.title}.mp3`;
         const outputPath = path.join('public', 'downloads', fileName);
@@ -108,9 +120,15 @@ async function convertVideo(req, res) {
             }, 5000);
         });
 
+        logger.info(`Video successfully converted: ${fileName}`);
+        return res.status(200).json({
+            message: 'Conversion completed',
+            downloadUrl:`/frontend/public/downloads/${fileName}`
+        });
+
         //
         // Endpoint GET /status
-        // Retorna o status atual da conversão, seja ele em andamento ou finalizado.
+        // Retorna o status atual da conversão, seja em andamento ou finalizado.
         // Returns the current status of the conversion, either in progress or finalised.
         //
         app.get('/status', (req, res) => { 
@@ -154,11 +172,11 @@ async function convertVideo(req, res) {
             // Para todos os outros erros não tratados
             // For all other untreated errors
             //
-            return res.status(500).json({
-                message: 'An unexpected error occurred during the conversion.',
-                error: error.message
-            });
+            logger.error(`Error during video conversion: ${error.message}`);
+            return res.status(500).json({ message: 'An unexpected error occurred during the conversion ', error});
         }
+    } finally {
+        downloadStatus.inProgress = false;
     }
 }
 
