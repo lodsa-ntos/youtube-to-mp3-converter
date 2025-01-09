@@ -13,6 +13,8 @@
   "dependencies": {
     "backend": "file:",
     "express": "^4.21.2",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0",
     "youtube-to-mp3-converter-backend": "file:",
     "ytdl-core": "^4.11.5"
   },
