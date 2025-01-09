@@ -1,53 +1,60 @@
-// Importar a biblioteca ytdl-core para interagir facilmente com vídeos do YouTube
-// Import the ytdl-core library to easily interact with YouTube videos
+const express = require('express');
+const app = express();
+
+//
+// Importações e configurações.
+// Imports and configurations.
+//
 const ytdl =  require('ytdl-core');
-
-//
-// Importar o módulo 'path' para manipulação de caminhos para os ficheiros
-// Import the ‘path’ module for manipulating file paths
-//
 const path = require('path');
-
-//
-// Importar o módulo 'fs' para leitura e escrita nos ficheiros
-// Import the 'fs' module for file reading and writing
-//
 const fs = require('fs');
 const { error } = require('console');
-
-//
-// Importar o logger
-// Import the logger
-//
 const logger = require('../utils/record-logs');
 
-
 //
-// Middleware global para capturar erros que possam escapam do fluxo esperado.
-// Global middleware to capture errors that may escape the expected flow.
+// Middleware global para captura de erros.
+// Global middleware for error capture.
 //
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ message: 'Server error. ', error: err.message })
-})
+    res.status(500).json({ message: 'Server error. ', error: err.message });
+});
 
+//
+// Estado do download
+// Download status
+//
 let downloadStatus = {
     inProgress: false,
     message: '',
 }
 
 //
-// Funções Auxiliar para validar o URL e a disponibilidade do vídeo.
-// Auxiliary functions to validate the URL and the availability of the video.
+// Funções para validar o URL 
+// Fnctions to validate the URL
 //
 function validateUrl (videoUrl) {
    return /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/.test(videoUrl);
 }
 
 //
-// Função assíncrona 'convertVideo' que processa a conversão do vídeo
-// Recebe dois parâmetros: req (pedido) e res (resposta) para gerir a solicitação HTTP.
-// Asynchronous function ‘convertVideo’ that processes the video conversion
+// Função para eliminar ficheiros temporários
+// Function to delete temporary files
+//
+const removeTempFile = (fileName) => {
+    const filePath = path.join('public', 'downloads', fileName);
+    fs.unlink(filePath, (err) => {
+        if (err) {
+            onsole.error('Error deleting file: ', err);
+        } else {
+            console.log('File deleted: ', fileName);
+        }
+    });
+};
+
+//
+//* Função principal de conversão de vídeo
+//* Main video conversion function
 //
 async function convertVideo(req, res) {
     
@@ -89,21 +96,6 @@ async function convertVideo(req, res) {
         });
 
         //
-        // Função para eliminar o ficheiro temporário após a conversão
-        // Function to delete the temporary file after conversion
-        //
-        const removeTempFile = (fileName) => {
-            const filePath = path.join('public', 'downloads', fileName);
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                    console.error('Error deleting file: ', err);
-                } else {
-                    console.log('File deleted: ', fileName);
-                }
-            });
-        };
-
-        //
         // No fim da conversão, chamamos a função para limpar o ficheiro
         // At the end of the conversion, we call the function to clear the file
         //
@@ -125,19 +117,6 @@ async function convertVideo(req, res) {
             message: 'Conversion completed',
             downloadUrl:`/frontend/public/downloads/${fileName}`
         });
-
-        //
-        // Endpoint GET /status
-        // Retorna o status atual da conversão, seja em andamento ou finalizado.
-        // Returns the current status of the conversion, either in progress or finalised.
-        //
-        app.get('/status', (req, res) => { 
-            res.status(200).json({
-                inProgress: downloadStatus.inProgress,
-                message: downloadStatus.message,
-            });
-            
-        })
 
     } catch (error) {
 
@@ -179,5 +158,17 @@ async function convertVideo(req, res) {
         downloadStatus.inProgress = false;
     }
 }
+
+//
+// Endpoint GET /status
+// Retorna o status atual da conversão, seja em andamento ou finalizado.
+// Returns the current status of the conversion, either in progress or finalised.
+//
+app.get('/status', (req, res) => { 
+    res.status(200).json({
+        inProgress: downloadStatus.inProgress,
+        message: downloadStatus.message,
+    });    
+});
 
 module.exports = { convertVideo };
