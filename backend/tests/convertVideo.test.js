@@ -1,7 +1,7 @@
 const { validateUrl } = require('../src/utils/validate-links');
 
 describe('validateUrl', () => {
-  //Test1_ValidateUrls
+  //Test1_ValidatUrls
   test('should return true for valid YouTube URLs', () => { 
     const validUrls = [
       'https://www.youtube.com/watch?v=12345',
@@ -13,7 +13,7 @@ describe('validateUrl', () => {
     });
    });
 
-  //Test2_ValidateUrls
+  //Test2_InvalidUrls
   test('should return false for invalid URLs', () => { 
     const invalidUrls = [
       'https://example.com/watch?v=12345',
