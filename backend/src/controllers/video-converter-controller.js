@@ -10,6 +10,8 @@ const path = require('path');
 const fs = require('fs');
 const { error } = require('console');
 const logger = require('../utils/record-logs');
+const ffmpeg = require('fluent-ffmpeg');
+const validateUrl = require('../utils/validate-links');
 
 //
 // Middleware global para captura de erros.
@@ -27,14 +29,6 @@ app.use((err, req, res, next) => {
 let downloadStatus = {
     inProgress: false,
     message: '',
-}
-
-//
-// Funções para validar o URL 
-// Fnctions to validate the URL
-//
-function validateUrl (videoUrl) {
-   return /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/.test(videoUrl);
 }
 
 //
@@ -58,69 +52,59 @@ const removeTempFile = (fileName) => {
 //
 async function convertVideo(req, res) {
     
-    const { videoUrl } = req.body;
+    const { videoUrl, quality } = req.body;
 
     logger.info(`Request received to convert video: ${videoUrl}`);
 
     //
-    // Validar o URL e a disponibilidade do vídeo.
-    // Validate the URL and the availability of the video.
+    // Validar o URL e a disponibilidade do vídeo e a qualidade do mesmo.
+    // Validate the URL and the availability of the video and its quality.
     //
     if (!videoUrl || !validateUrl(videoUrl)) {
         logger.warn(`Invalid or missing video URL: ${videoUrl}`);
         return res.status(400).json({ message: 'Invalid or missing video URL'});
     }
 
+    if (!quality || !['64', '128', '192', '320'].includes(quality)) {
+        logger.warn(`Missing Choose quality: ${quality}`);
+        return res.status(400).json({ message: 'Invalid quality. Choose: 64, 128, 192, 320.'})
+    }
+
     try {
+
+        const videoInfo = await ytdl.getInfo(videoUrl);
+        const titleFile = videoInfo.videoDetails.title.replace(/[<>:"/\\|?*]/g, ''); // Remove invalid characters 
+        const fileName = `${titleFile}_${quality}kbps.mp3`;
+        const outputPath = path.join('public', 'downloads', fileName);
 
         downloadStatus.inProgress = true;
         downloadStatus.message = 'Conversion in progress...';
         logger.info('Video conversion started.');
 
-        const videoInfo = await ytdl.getInfo(videoUrl);
-        const fileName = `${videoInfo.videoDetails.title}.mp3`;
-        const outputPath = path.join('public', 'downloads', fileName);
-
         const audioStream = ytdl(videoUrl, { filter: 'audioonly' });
-        const writeStream = fs.createWriteStream(outputPath);
-
-        audioStream.pipe(writeStream); // Conecta os dois fluxos (audioStream and writeStream) | Connects the two flows
-
-        //
-        // Se algo falhar no processo de conversão, a variável inProgress é atualizada para refletir o estado final e mostrar uma mensagem de erro sobre o estado do download
-        // If something fails in the conversion process, the download status is changed and an error message about the download status is displayed.
-        //
-        writeStream.on('error', () => {
-            downloadStatus.inProgress = false;
-            downloadStatus.message = 'Error during conversion';
+        await new Promise((resolve, reject) => {
+            ffmpeg(audioStream)
+            .audioBitrate(parseInt(quality))
+            .save(outputPath)
+            .on('end', resolve)
+            .on('error', reject);
         });
 
+        downloadStatus.inProgress = false;
+        downloadStatus.message = 'Conversion successful';
+
         //
-        // No fim da conversão, chamamos a função para limpar o ficheiro
-        // At the end of the conversion, we call the function to clear the file
+        // Limpeza do ficheiro após 5 segundos
+        // Cleaning the file after 5 seconds
         //
-        writeStream.on('finish', () => {
-            downloadStatus.inProgress = false;
-            downloadStatus.message = 'Conversion successful';
-            
-            //
-            // Limpeza do ficheiro após 5 segundos
-            // Cleaning the file after 5 seconds
-            //
-            setTimeout(() => {
-                removeTempFile(fileName);
-            }, 5000);
-        });
+        setTimeout(() => removeTempFile(fileName), 5000);
 
         logger.info(`Video successfully converted: ${fileName}`);
-        return res.status(200).json({
-            message: 'Conversion completed',
-            downloadUrl:`/frontend/public/downloads/${fileName}`
-        });
+        return res.status(200).json({ message: 'Conversion completed', downloadUrl:`/downloads/${fileName}` });
 
     } catch (error) {
 
-        console.error('Error in conversion: ', error);
+        downloadStatus.inProgress = false;
 
         if (error instanceof ytdl.errors.VideoUnavailable) {
             //
@@ -154,8 +138,6 @@ async function convertVideo(req, res) {
             logger.error(`Error during video conversion: ${error.message}`);
             return res.status(500).json({ message: 'An unexpected error occurred during the conversion ', error});
         }
-    } finally {
-        downloadStatus.inProgress = false;
     }
 }
 
