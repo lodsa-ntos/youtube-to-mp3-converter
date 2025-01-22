@@ -1,7 +1,6 @@
 // Importações e configurações.
 // Imports and configurations.
 const express = require('express');
-require('dotenv').config();
 const { csrfProtection, corsMiddleware, setCSP } = require('../src/middlewares/security');
 const convertRoutes = require('./routes/convertLinkRouter');
 const logger = require('./helpers/recordLogs');

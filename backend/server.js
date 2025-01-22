@@ -1,3 +1,7 @@
+// Carregar as variáveis de ambiente
+// Load the environment variables
+require('dotenv').config();
+
 // Importar a aplicação Express configurada
 // Import the configured Express application
 const app = require('./src/app');
