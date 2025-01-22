@@ -1,90 +1,49 @@
-//
-// Importar o módulo Express para gerir as rotas
-// Import the Express library to manage routes
-//
 const express = require('express');
 
-//
-// Importar o controlador de vídeo do controlador
-// Import the video driver from the controller
-//
-const { convertVideo, getStatus } = require('../controllers/convertLinkController');
-const { error, log } = require('winston');
-const logger = require('../helpers/record-logs');
+const {
+  createConversion,
+  updateConversionStatus, 
+  getConversionStatus,
+ } = requiere('../controllers/convertLinkController');
 
-//
-// Criar uma instância do router Express para definir rotas
-// Create an Express router instance to define routes
-//
-const router = express.Router();
+ const logger = require('../helpers/recordLogs');
 
-//
-// Rota para converter vídeos: aceita pedidos POST com URL e qualidade como parâmetros
-// Route to convert videos: accepts POST requests with URL and quality as parameters
-//
+ const router = express.Router();
+
+ // Rota para criar uma nova conversão
+ // Route to create a new conversion
 router.post('/convert', async (req, res) => {
-  const { url, quality } = req.body;
-
-  logger.info(`Request to convert video: ${url} with quality: ${quality}`);
-  //
-  // Valida se o URL e a qualidade foram fornecidos
-  // Validates that the URL and quality have been supplied
-  //
-  if (!url) {
-    logger.error('URL is required.');
-    return res.status(400).send({ error: 'URL is required.' });
-  }
-  if (!quality || !['64', '128', '192', '320'].includes(quality)) {
-    logger.error('Invalid quality. Choose from: 64, 128, 192, 320.');
-    return res.status(400).send({ error: 'Invalid quality. Choose from: 64, 128, 192, 320.' });
-  }
-
   try {
-    
-    logger.info('Starting video conversion...');
-    const requestID = await convertVideo(url, quality);
-
-    res.status(200).send({ 
-      requestID,
-      message: 'Conversion started. You can check the status using the requestId.',    
-    });
-
+    logger.info('Received request to create a new conversion.');
+    await createConversion(req, res);
   } catch (error) {
-    logger.error('Conversion error: ', error);
-    console.error('Conversion error: ', error);
-    return res.status(500).send({ error: 'Error during video conversion.'});
+    logger.error('Error in /convert route:', error);
+    res.status(500).send({ error: 'An error occurred while processing your request.' });
   }
 });
 
-router.get('/status/:requestID', async (req, res) => {
-  const { requestID } = req.params;
-
-  logger.info(`Checking status for request ID: ${requestID}`);
-
-  if (!requestID) {
-    logger.error('Request ID is required.');
-    return res.status(400).send({ error: 'Request ID is required.' });
-  }
-
+// Rota para atualizar o status de uma conversão
+// Route to update the status of a conversion
+router.put('/convert/:requestId', async (req, res) => {
   try {
-    const status = await getStatus(requestID);
-    logger.info('Status check complete.');
-
-    if (!status) {
-      logger.error('Request not found.');
-      return res.status(404).send({ error: 'Request not found.' });
-    }
-    res.status(200).send(status);
-
+    logger.info(`Received request to update status for ID: ${req.params.requestId}`);
+    await updateConversionStatus(req, res);
   } catch (error) {
-    logger.error('Status check error: ', error);
-    console.error('Status check  error: ', error);
-    return res.status(500).send({ error: 'Error retrieving status.'});
+    logger.error('Error in /status/:requestId route:', error);
+    res.status(500).send({ error: 'An error occurred while processing your request.' });
   }
 });
 
-//
-// Exportar o router para ser utilizado em outros ficheiros
-// Export the router to be used in other files
-//
+// Rota para obter o estado de uma conversão
+// Route to get the status of a conversion
+router.get('/status/:requestId', async (req, res) => {
+  try {
+    logger.info(`Received request to get status for ID: ${req.params.requestId}`);
+    await getConversionStatus(req, res);
+  } catch (error) {
+    logger.error('Error in /status/:requestId route:', error);
+    res.status(500).send({ error: 'An error occurred while processing your request.' });
+  }
+});
+
 module.exports = router;
