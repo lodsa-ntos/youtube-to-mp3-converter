@@ -2,7 +2,7 @@
 // Função para validar o URL 
 // Fnction to validate the URL
 
-const logger = require("../helpers/record-logs");
+const logger = require("../helpers/recordLogs");
 
 //
 const validateUrl = (url) => {

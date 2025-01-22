@@ -8,7 +8,7 @@ const express = require('express');
 // Importar o controlador de vídeo do controlador
 // Import the video driver from the controller
 //
-const { convertVideo, getStatus } = require('../services/converter-video');
+const { convertVideo, getStatus } = require('../services/converterVideo');
 const { error, log } = require('winston');
 const logger = require('../helpers/record-logs');
 

@@ -204,20 +204,4 @@ const convertVideo = async (req, res) => {
   }
 }
 
-//
-// Endpoint GET /status
-// Retorna o status atual da conversão, seja em andamento ou finalizado.
-// Returns the current status of the conversion, either in progress or finalised.
-//
-const getStatus = async (req, res) =>{
-  const { requestID } = req.params;
-  const status = downloadStatusMap.get(requestID);
-
-  if (!status) {
-    logger.error(`Request ID not found: ${requestID}`);
-    return res.status(404).json({ message: "Request ID not found." });
-  }
-  res.status(200).json(status);
-}
-
-module.exports = {convertVideo, getStatus};
+module.exports = convertVideo;
