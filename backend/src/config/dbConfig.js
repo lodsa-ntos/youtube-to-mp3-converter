@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 // Configuração das variáveis de ambiente
 // Configuration of environment variables
 require('dotenv').config();
+console.log(process.env.MONGO_URI);
 
 const logger = require('../helpers/recordLogs')
 
