@@ -3,7 +3,6 @@ const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs');
 const path = require('path');
 const logger =  require("../helpers/recordLogs" );
-const { v4: uuidv4 } = require('uuid');
 
 //
 //* Função principal de conversão de vídeo
