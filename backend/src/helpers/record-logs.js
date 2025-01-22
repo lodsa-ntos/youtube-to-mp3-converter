@@ -4,6 +4,15 @@
 //
 const winston = require('winston');
 
+const fs = require('fs');
+const path = require('path');
+
+// Criar um diretório para armazenar os ficheiros de log
+// Create a directory to store log files
+const logDir = path.join(__dirname, 'logs');
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
 //
 // Níveis personalizados para todas operações
 // Customised levels for all operations
@@ -23,12 +32,17 @@ const customLevels = {
   }
 };
 
+// Adicionar as cores personalizadas ao Winston
+// Add custom colours to Winston
+winston.addColors(customLevels.colors);
+
 //
 // Criar um logger com duas opções de transporte (console e ficheiro)
 // Create a logger with two transport options (console and file)
 //
 const logger = winston.createLogger({
-  level: customLevels.levels, // Define o nível mínimo de log (ex: 'info', 'warn', 'error')
+  level: 'info', // Define o nível mínimo de log (ex: 'info', 'warn', 'error')
+  levels: customLevels.levels, // Define os níveis personalizados | Define custom levels
   format: winston.format.combine(
     winston.format.colorize(),
     winston.format.timestamp(),
@@ -39,10 +53,8 @@ const logger = winston.createLogger({
 
   transports: [
     new winston.transports.Console(),
-    new winston.transports.File({ filename: '/src/logs/app.log' })
+    new winston.transports.File({ filename: path.join(logDir, 'app.log') })
   ]
 });
-
-winston.addColors(customLevels.colors);
 
 module.exports = logger;
