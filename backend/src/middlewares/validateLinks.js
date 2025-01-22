@@ -1,13 +1,20 @@
 //
-// Função para validar o URL 
-// Fnction to validate the URL
-
-const logger = require("../helpers/recordLogs");
-
+// Importações e configurações.
+// Imports and configurations.
 //
-const validateUrl = (url) => {
-  logger.info(`Validating URL: ${url}`);
-  return /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/.test(url);
+const validator = require('validator');
+
+// Função para validar URL do YouTube
+// Function to validate YouTube URL
+const validateYoutubeUrl = (url) => {
+  const regex = /^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+  return regex.test(url);
 }
 
-module.exports = { validateUrl };
+// Função para validar URL no geral
+// Function to validate URL in general
+const validateUrl = (url) => {
+  return validator.isURL(url, { require_protocol: true });
+};
+
+module.exports = { validateYoutubeUrl, validateUrl }; ;
