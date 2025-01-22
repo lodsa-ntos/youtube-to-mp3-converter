@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-
+// Schema para conversões de vídeos
+// Schema for video conversions
 const conversionSchema = new mongoose.Schema({
   videoUrl: {
     type: String,
@@ -28,6 +29,7 @@ const conversionSchema = new mongoose.Schema({
 );
 
 // Índices para consultas rápidas
+// Indexes for quick queries
 conversionSchema.index({ status: 1 });
 conversionSchema.index({ createdAt: -1 });
 
