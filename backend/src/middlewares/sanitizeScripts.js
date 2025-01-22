@@ -3,7 +3,7 @@
 // Imports and configurations.
 //
 const xss = require('xss');
-const logger = require('../helpers/record-logs');
+const logger = require('../helpers/recordLogs');
 
 //
 // Função para sanitizar entradas (evitar XSS)

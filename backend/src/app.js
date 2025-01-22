@@ -1,9 +1,10 @@
 // Importações e configurações.
 // Imports and configurations.
 const express = require('express');
+require('dotenv').config();
 const { csrfProtection, corsMiddleware, setCSP } = require('../src/middlewares/security');
-const convertRoutes = require('./routes/convert-link-router');
-const logger = require('./helpers/record-logs');
+const convertRoutes = require('./routes/convertLinkRouter');
+const logger = require('./helpers/recordLogs');
 
 // Instanciar todos os métodos e propriedades do Express
 // Instantiate all Express methods and properties

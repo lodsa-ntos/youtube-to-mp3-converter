@@ -1,7 +1,7 @@
 // Importar a aplicação Express configurada
 // Import the configured Express application
 const app = require('./src/app');
-const logger = require('./src/helpers/record-logs');
+const logger = require('../backend/src/helpers/recordLogs');
 
 // Definir a Porta do servidor e tentar usar a PORTA definida na variável ambiente (process.env.PORT)
 // Set the server PORT and try to use the PORT defined in the environment variable

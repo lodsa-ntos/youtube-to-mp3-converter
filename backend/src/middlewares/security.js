@@ -6,7 +6,7 @@ const csrf = require('csurf');
 const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
-const logger = require('../helpers/record-logs');
+const logger = require('../helpers/recordLogs');
 
 const csrfProtection = [cookieParser(), csrf({ cookie: true })];
 

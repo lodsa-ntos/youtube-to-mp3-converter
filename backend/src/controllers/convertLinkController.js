@@ -1,4 +1,4 @@
-const convertVideo = require("../services/convertVideo"); 
+const convertVideo = require('../services/convertVideo'); 
 const logger = require("../helpers/recordLogs");
 
 // Função para converter vídeo a partir de um determinado URL
@@ -18,7 +18,7 @@ const convertLink = async (req, res) => {
     });
 
   } catch (error) {
-    logger.error(`Error in video conversion: ${error.message}`);
+    logger.error('Error in video conversion:', error);
     res.status(400).json({ message: error.message });
   }
 };

@@ -8,7 +8,7 @@ const logger =  require("../helpers/recordLogs" );
 //* Função principal de conversão de vídeo
 //* Main video conversion function
 //
-const converterVideo = async (videoUrl, quality) => {
+const convertVideo = async (videoUrl, quality) => {
 
   // Verifica se a URL do vídeo foi fornecida
   // Check if the video URL was provided
@@ -60,4 +60,4 @@ const converterVideo = async (videoUrl, quality) => {
   };
 };
 
-module.exports = converterVideo;
+module.exports = convertVideo; 

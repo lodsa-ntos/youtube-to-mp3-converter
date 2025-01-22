@@ -1,3 +1,5 @@
+const logger = require("../helpers/recordLogs");
+
 //
 // Endpoint GET /status
 // Retorna o status atual da conversão, seja em andamento ou finalizado.
