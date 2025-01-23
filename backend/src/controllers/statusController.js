@@ -1,5 +1,9 @@
 const logger = require("../helpers/recordLogs");
 
+// Mapa para armazenar o estado da conversão
+// Map to store the conversion status
+const downloadStatusMap = new Map();
+
 //
 // Endpoint GET /status
 // Retorna o status atual da conversão, seja em andamento ou finalizado.

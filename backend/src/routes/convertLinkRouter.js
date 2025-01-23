@@ -1,11 +1,7 @@
 const express = require("express");
 
-const {
-  createConversion,
-  updateConversionStatus,
-  getConversionStatus,
-} = require("../controllers/convertLinkController");
-
+const { convertLink } = require("../controllers/convertLinkController");
+const { getStatus } = require("../controllers/statusController");
 const logger = require("../helpers/recordLogs");
 
 const router = express.Router();
@@ -15,7 +11,7 @@ const router = express.Router();
 router.post("/convert", async (req, res) => {
   try {
     logger.info("Received request to create a new conversion.");
-    await createConversion(req, res);
+    await convertLink(req, res);
   } catch (error) {
     logger.error("Error in /convert route:", error);
     res
@@ -26,6 +22,7 @@ router.post("/convert", async (req, res) => {
 
 // Rota para atualizar o status de uma conversão
 // Route to update the status of a conversion
+/*
 router.put("/convert/:requestId", async (req, res) => {
   try {
     logger.info(
@@ -39,6 +36,7 @@ router.put("/convert/:requestId", async (req, res) => {
       .send({ error: "An error occurred while processing your request." });
   }
 });
+*/
 
 // Rota para obter o estado de uma conversão
 // Route to get the status of a conversion
@@ -47,7 +45,7 @@ router.get("/status/:requestId", async (req, res) => {
     logger.info(
       `Received request to get status for ID: ${req.params.requestId}`
     );
-    await getConversionStatus(req, res);
+    await getStatus(req, res);
   } catch (error) {
     logger.error("Error in /status/:requestId route:", error);
     res

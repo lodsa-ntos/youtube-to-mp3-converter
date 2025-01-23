@@ -9,6 +9,8 @@ const convertLink = async (req, res) => {
 
   try {
     
+    // A função convertVideo irá retornar o ficheiro convertido e a URL para download
+    // The convertVideo function will return the converted file and the download URL
     const { fileName, downloadUrl } = await convertVideo(videoUrl, quality);
   
     logger.info(`Conversion successful for video: ${fileName}`);

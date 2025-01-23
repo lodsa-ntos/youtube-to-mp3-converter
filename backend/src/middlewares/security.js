@@ -5,17 +5,16 @@
 const csrf = require('csurf');
 const cors = require('cors');
 const helmet = require('helmet');
-const cookieParser = require('cookie-parser');
 const logger = require('../helpers/recordLogs');
 
-const csrfProtection = [cookieParser(), csrf({ cookie: true })];
+const csrfProtection = csrf({ cookie: true });
 
 // CORS configuration
 const corsOptions = {
-  // origin: 'http://your-frontend-domain.com', // Replace with your frontend domain
+  // origin: 'http://your-frontend-domain.com',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
-  optionsSuccessStatus: 204
+  optionsSuccessStatus: 204,
 };
 
 // CORS middleware
