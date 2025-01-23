@@ -48,6 +48,7 @@ app.post("/protected-route", (req, res) => {
 
 // Define que as rotas da API começarão com '/api' para converter o vídeo
 // Defines that API routes will start with '/api' to convert the video
+console.log("Configurar rotas para /api...");
 app.use('/api', convertRoutes);
 
 // Rota principal

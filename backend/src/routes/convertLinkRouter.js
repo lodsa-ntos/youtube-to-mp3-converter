@@ -1,16 +1,15 @@
 const express = require("express");
-
+const router = express.Router();
 const { convertLink } = require("../controllers/convertLinkController");
 const { getStatus } = require("../controllers/statusController");
 const logger = require("../helpers/recordLogs");
-
-const router = express.Router();
 
 // Rota para criar uma nova conversão
 // Route to create a new conversion
 router.post("/convert", async (req, res) => {
   try {
     logger.info("Received request to create a new conversion.");
+    console.log("Request to /convert received");
     await convertLink(req, res);
   } catch (error) {
     logger.error("Error in /convert route:", error);
