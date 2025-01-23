@@ -18,8 +18,10 @@ const corsOptions = {
   optionsSuccessStatus: 204
 };
 
+// CORS middleware
 const corsMiddleware = cors(corsOptions);
 
+// Content Security Policy configuration
 const setCSP = () => {
   logger.info('Setting Content Security Policy...');
   return helmet.contentSecurityPolicy({

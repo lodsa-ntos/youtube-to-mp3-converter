@@ -26,6 +26,20 @@ app.use('/', (req, res) => {
   res.status(200).send('API is running...');
 });
 
+// Rota para obter o token CSRF
+// Route to get the CSRF token
+app.get("/csrf-token", csrfProtection, (req, res) => {
+  logger.info("Received request for CSRF token.");
+  res.json({ csrfToken: req.csrfToken() });
+});
+
+// Rota protegida por CSRF
+// CSRF-protected route
+app.get("/protected-route", csrfProtection, (req, res) => {
+  logger.info("Received request to protected route.");
+  res.json({ message: "CSRF token is valid." });
+});
+
 // Define que as rotas da API começarão com '/api' para converter o vídeo
 // Defines that API routes will start with '/api' to convert the video
 app.use('/api', convertRoutes);
