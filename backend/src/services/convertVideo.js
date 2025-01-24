@@ -1,4 +1,4 @@
-const ytdl = require('@distube/ytdl-core');
+const ytdl = require('ytdl-core');
 const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs');
 const path = require('path');
@@ -46,7 +46,19 @@ const convertVideoService = async (videoUrl, quality) => {
 
     // Converte o vídeo para MP3
     // Convert the video to MP3
-    const audioStream = ytdl(videoUrl, { filter: "audioonly" });
+    const audioStream = ytdl(videoUrl, {
+      filter: "audioonly",
+      requestOptions: {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
+          'Accept-Language': 'en-US,en;q=0.9',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Connection': 'keep-alive',
+          'Referer': 'https://www.youtube.com/',
+          'Origin': 'https://www.youtube.com'
+        }
+      }
+    });
     logger.info("Audio stream started for conversion.");
     await new Promise((resolve, reject) => {
       ffmpeg(audioStream)
