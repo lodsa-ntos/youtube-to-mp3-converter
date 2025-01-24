@@ -7,8 +7,15 @@ const convertLink = async (req, res) => {
 
   const { videoUrl, quality } = req.body;
 
+  if (!videoUrl) {
+    const errorMessage = "Video URL is required.";
+    logger.error(errorMessage);
+    return res.status(400).json({ message: errorMessage });
+  }
+
   try {
     
+    console.log("Request Body Received: ", req.body);
     // A função convertVideo irá retornar o ficheiro convertido e a URL para download
     // The convertVideo function will return the converted file and the download URL
     const { fileName, downloadUrl } = await convertVideo(videoUrl, quality);

@@ -46,9 +46,21 @@ app.post("/protected-route", (req, res) => {
   res.json({ message: "CSRF token is valid." });
 });
 
+// Rota de teste
+// Test route
+app.post('/api/test', (req, res) => {
+  res.send('Test route reached');
+});
+
+// Middleware para depuração de rotas
+app.use((req, res, next) => {
+  logger.info(`Route called: ${req.method} ${req.originalUrl}`);
+  console.log(`Rota chamada: ${req.method} ${req.originalUrl}`)
+  next();
+});
+
 // Define que as rotas da API começarão com '/api' para converter o vídeo
 // Defines that API routes will start with '/api' to convert the video
-console.log("Configurar rotas para /api...");
 app.use('/api', convertRoutes);
 
 // Rota principal

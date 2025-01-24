@@ -13,6 +13,7 @@
   "author": "Lodney Santos",
   "license": "ISC",
   "dependencies": {
+    "@distube/ytdl-core": "^4.15.8",
     "aws-sdk": "^2.1692.0",
     "backend": "file:",
     "cookie-parser": "^1.4.7",
@@ -30,7 +31,7 @@
     "winston-daily-rotate-file": "^5.0.0",
     "xss": "^1.0.15",
     "youtube-to-mp3-converter-backend": "file:",
-    "ytdl-core": "^4.11.5"
+    "ytdl-core": "npm:@distube/ytdl-core@^4.15.8"
   },
   "devDependencies": {
     "mock-express": "^1.3.1",

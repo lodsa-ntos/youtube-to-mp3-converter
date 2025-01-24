@@ -6,10 +6,14 @@ const logger = require("../helpers/recordLogs");
 
 // Rota para criar uma nova conversão
 // Route to create a new conversion
-router.post("/convert", async (req, res) => {
+router.post("/link-convert", async (req, res) => {
   try {
-    logger.info("Received request to create a new conversion.");
-    console.log("Request to /convert received");
+    console.log("Starting conversion...");
+    logger.info("Starting conversion...");
+
+    console.log("Data Received: ", req.body);
+    logger.info("Data Received: ", req.body);
+
     await convertLink(req, res);
   } catch (error) {
     logger.error("Error in /convert route:", error);
